@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ar">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>صفحة الدفع</title>
+  </head>
+  <body>
+    <h1>تفاصيل الدفع</h1>
+    <p>المبلغ المطلوب: {{ amount }} جنيه</p>
+    <!-- زر الدفع: عند الضغط عليه، هنستخدم الـ Payment Token لإتمام عملية الدفع -->
+    <button onclick="initiatePayment()">ادفع الآن</button>
+
+    <script>
+      function initiatePayment() {
+        // هنا بتوجه المستخدم لبوابة الدفع، مثال:
+        // استبدل الـ iframe_id أو طريقة الدفع حسب التوثيق الخاص بـ Paymob
+        var paymentToken = "{{ payment_token }}";
+        if (paymentToken) {
+          // لو بوابة الدفع بتدعم الإطار (iframe)
+          window.location.href =
+            "https://accept.paymob.com/api/acceptance/iframes/4947232?payment_token=" +
+            paymentToken;
+        } else {
+          alert("لا يوجد Payment Token. حاول مرة أخرى.");
+        }
+      }
+    </script>
+  </body>
+</html>
