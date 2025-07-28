@@ -12,46 +12,28 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
-from django.utils.timezone import now
-from django.contrib.messages import constants as messages
 import pymysql
+from django.contrib.messages import constants as messages
+
+# دعم MySQLdb عبر pymysql (إذا كنت تستخدم MySQL لاحقاً)
 pymysql.install_as_MySQLdb()
-from django.conf import settings
 
-
-
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+# -------------------------------------------------------------------
+# Paths
+# -------------------------------------------------------------------
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
-
-
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
+# -------------------------------------------------------------------
+# Security
+# -------------------------------------------------------------------
 SECRET_KEY = 'django-insecure-gdg5v*9qhism6wfj^2#920oh6^rhuf0#fpeqv&_86+ubo^b$g1'
-
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
-# تم إضافة النطاق الخاص بـ ngrok بالإضافة إلى النطاقات المحلية
 ALLOWED_HOSTS = ['.onrender.com', 'localhost', '127.0.0.1']
+CSRF_TRUSTED_ORIGINS = ['https://*.onrender.com']
 
-CSRF_TRUSTED_ORIGINS = ['https://*.onrender.com'] # Added CSRF_TRUSTED_ORIGINS for ngrok integration
-
-
-from django.contrib.messages import constants as messages
-
-MESSAGE_TAGS = {
-    messages.ERROR: 'danger',
-}
-
-
-
-# Application definition
-
+# -------------------------------------------------------------------
+# Applications
+# -------------------------------------------------------------------
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -59,13 +41,20 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
     'accounts',
     'content',
-    #'payments',
+    # 'payments',
 ]
 
+# -------------------------------------------------------------------
+# Middleware
+# -------------------------------------------------------------------
 MIDDLEWARE = [
+    # Security + WhiteNoise لأداء أفضل في تقديم الستاتيكس
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -76,6 +65,9 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'Code.urls'
 
+# -------------------------------------------------------------------
+# Templates
+# -------------------------------------------------------------------
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -94,12 +86,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'Code.wsgi.application'
 
-
+# -------------------------------------------------------------------
 # Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
-
-
+# -------------------------------------------------------------------
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -107,63 +96,60 @@ DATABASES = {
     }
 }
 
-
+# -------------------------------------------------------------------
 # Password validation
-# https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
-
+# -------------------------------------------------------------------
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-# إعدادات تسجيل الدخول وإعادة التوجيه
+# -------------------------------------------------------------------
+# Authentication
+# -------------------------------------------------------------------
 LOGIN_URL = "/login/"
 LOGIN_REDIRECT_URL = '/accounts/profile/'
 
-
-
+# -------------------------------------------------------------------
 # Internationalization
-# https://docs.djangoproject.com/en/5.1/topics/i18n/
-
+# -------------------------------------------------------------------
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_TZ = True
 
-
+# -------------------------------------------------------------------
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.1/howto/static-files/
-
-STATIC_URL = 'static/'
-
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
-
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-# إعداد الملفات الثابتة
+# -------------------------------------------------------------------
 STATIC_URL = '/static/'
+
+# حيث سينسخ collectstatic الملفات إليه
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# الأماكن الإضافية التي توجد فيها ملفات الستاتيكس خلال التطوير
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'Frontend', 'static'),
 ]
 
+# تخزين الستاتيكس عبر WhiteNoise (ضغط + caching)
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# إعدادات ملفات الميديا (Media Files)
-import os
-DEBUG = True
+# -------------------------------------------------------------------
+# Media files (Uploads)
+# -------------------------------------------------------------------
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-#""""""""""""""""""""""""""""""""""""""""""""""""""
 
+# -------------------------------------------------------------------
+# Messages (Bootstrap compatibility)
+# -------------------------------------------------------------------
+MESSAGE_TAGS = {
+    messages.ERROR: 'danger',
+}
+
+# -------------------------------------------------------------------
+# Default primary key field type
+# -------------------------------------------------------------------
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
