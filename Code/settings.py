@@ -37,8 +37,9 @@ SECRET_KEY = 'django-insecure-gdg5v*9qhism6wfj^2#920oh6^rhuf0#fpeqv&_86+ubo^b$g1
 DEBUG = True
 
 # تم إضافة النطاق الخاص بـ ngrok بالإضافة إلى النطاقات المحلية
-ALLOWED_HOSTS = ['.ngrok-free.app', 'localhost', '127.0.0.1']
-CSRF_TRUSTED_ORIGINS = ['https://*.ngrok-free.app']  # Added CSRF_TRUSTED_ORIGINS for ngrok integration
+ALLOWED_HOSTS = ['.onrender.com', 'localhost', '127.0.0.1']
+
+CSRF_TRUSTED_ORIGINS = ['https://*.onrender.com'] # Added CSRF_TRUSTED_ORIGINS for ngrok integration
 
 
 from django.contrib.messages import constants as messages
